@@ -225,7 +225,16 @@
       margin: 0 0 10px;
     }
     .folha p { margin: 0 0 12px; }
-    .folha h2:not(:first-child) { margin-top: 34px; }
+        .folha h2:not(:first-child) { margin-top: 0; padding-top: 22px; }
+    .folha h2:not(:first-child)[data-sem-espaco] { padding-top: 0; }
+    .folha p[data-cont-next] { text-align-last: justify; }
+    .folha .sumario-titulo { font-size: 22px; font-weight: 700; text-align: center; margin: 0 0 22px; }
+    .folha .sumario-linha { display: flex; align-items: baseline; gap: 6px; margin: 0 0 9px; font-size: 15px; text-align: left; cursor: pointer; }
+    .folha .sumario-linha .s-texto { flex: 0 1 auto; }
+    .folha .sumario-linha .s-pontos { flex: 1 1 auto; min-width: 14px; border-bottom: 1.5px dotted #777; transform: translateY(-3px); }
+    .folha .sumario-linha .s-pag { flex: none; }
+    .folha .sumario-linha:hover .s-texto { text-decoration: underline; }
+
     .folha .num {
       position: absolute;
       left: 0;
@@ -617,6 +626,77 @@
     html.mobile .deco-topo-dir { width: 100px; }
     html.mobile .deco-base-esq { width: 150px; }
     html.mobile .deco-base-dir { width: 190px; }
+      /* NOVO-CAPA-IMG: imagem na capa e na contra-capa, com sombra de livro por cima */
+    .folha-imagem { position: relative; padding: 0; overflow: hidden; }
+    .folha-imagem img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+      user-select: none; -webkit-user-drag: none; pointer-events: none;
+    }
+    .folha-imagem::before, .folha-imagem::after { z-index: 2; }
+    .folha-imagem .sombra-capa { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+    /* NOVO-CAPA-DURA: capa dura com vinco na lombada e bordas abauladas */
+    :root {
+      --capa-canto: 4px;
+      --capa-canto-lombada: 1px;
+      --capa-vinco-escuro: 0.10;
+      --capa-vinco-claro: 0.30;
+      --capa-borda: 0.10;
+      --capa-brilho: 0.25;
+      --capa-sombra: 0.18;
+    }
+
+    .pagina:has(> .folha-imagem img[alt="Capa"]),
+    .miolo.capa .sombra-dir {
+      border-radius: var(--capa-canto-lombada) var(--capa-canto) var(--capa-canto) var(--capa-canto-lombada);
+    }
+    .pagina:has(> .folha-imagem img[alt="Contra-capa"]),
+    .miolo.contra .sombra-esq {
+      border-radius: var(--capa-canto) var(--capa-canto-lombada) var(--capa-canto-lombada) var(--capa-canto);
+    }
+
+    .miolo.capa .sombra-dir,
+    .miolo.contra .sombra-esq {
+      box-shadow: 0 2px 4px rgba(0,0,0,calc(var(--capa-sombra) * 0.8)),
+                  0 10px 22px rgba(0,0,0,var(--capa-sombra));
+    }
+
+    .folha-imagem .sombra-capa {
+      background: linear-gradient(to right,
+        rgba(0,0,0,calc(var(--capa-vinco-escuro) * 0.9)) 0%,
+        rgba(255,255,255,var(--capa-vinco-claro)) 0.8%,
+        rgba(0,0,0,0.03) 2%,
+        rgba(0,0,0,var(--capa-vinco-escuro)) 3.4%,
+        rgba(255,255,255,var(--capa-vinco-claro)) 4.2%,
+        rgba(255,255,255,0.06) 5.2%,
+        rgba(0,0,0,0.04) 6.5%,
+        transparent 9%);
+      box-shadow:
+        inset 0 6px 6px -3px rgba(255,255,255,var(--capa-brilho)),
+        inset 0 -10px 14px -4px rgba(0,0,0,var(--capa-borda)),
+        inset -10px 0 14px -4px rgba(0,0,0,var(--capa-borda)),
+        inset 0 0 0 2px rgba(0,0,0,0.06);
+    }
+
+    .folha-imagem img[alt="Contra-capa"] + .sombra-capa {
+      background: linear-gradient(to left,
+        rgba(0,0,0,calc(var(--capa-vinco-escuro) * 0.9)) 0%,
+        rgba(255,255,255,var(--capa-vinco-claro)) 0.8%,
+        rgba(0,0,0,0.03) 2%,
+        rgba(0,0,0,var(--capa-vinco-escuro)) 3.4%,
+        rgba(255,255,255,var(--capa-vinco-claro)) 4.2%,
+        rgba(255,255,255,0.06) 5.2%,
+        rgba(0,0,0,0.04) 6.5%,
+        transparent 9%);
+      box-shadow:
+        inset 0 6px 6px -3px rgba(255,255,255,var(--capa-brilho)),
+        inset 0 -10px 14px -4px rgba(0,0,0,var(--capa-borda)),
+        inset 10px 0 14px -4px rgba(0,0,0,var(--capa-borda)),
+        inset 0 0 0 2px rgba(0,0,0,0.06);
+    }
   </style>
 </head>
 
@@ -813,6 +893,8 @@
     })();
   </script>
 
+    <script src="conteudo.js"></script>
+
   <!-- ===================== LIVRO, CAPA, MENU E MODO PDF ===================== -->
   <script>
     (function () {
@@ -834,7 +916,12 @@
         '<h2>5 Quinto Tópico</h2>' + p(L1) + p(L2)
       ];
       // NOVO-CONTRA: o livro de exemplo tem uma folha de capa no começo e uma de contra-capa no fim
-      const TOTAL_LIVRO = paginas.length + 2;
+            // NOVO-ARQUIVO: se o conteudo.js existir, as páginas dele substituem o texto de exemplo
+      if (window.LIVRO_CONTEUDO && Array.isArray(window.LIVRO_CONTEUDO.paginas) && window.LIVRO_CONTEUDO.paginas.length) {
+        Array.prototype.splice.apply(paginas, [0, paginas.length].concat(window.LIVRO_CONTEUDO.paginas));
+      }
+
+	  const TOTAL_LIVRO = paginas.length + 2;
 
       // ---------- 2) Elementos ----------
       const livro = document.getElementById('livro');
@@ -912,8 +999,10 @@
       // são numeradas a partir de 1
       function montarFolha(indice) {
         if (indice < 0 || indice >= TOTAL_LIVRO) return ''; // página em branco
-        if (indice === 0) return '<div class="folha folha-especial"><div class="titulo-especial">Capa</div></div>';
-        if (indice === TOTAL_LIVRO - 1) return '<div class="folha folha-especial"><div class="titulo-especial">Contra-capa</div></div>';
+                // ALTERADO-CAPA-IMG: mantém a classe folha-especial para não perder as sombras
+        if (indice === 0) return '<div class="folha folha-especial folha-imagem"><img src="capa.jpg" alt="Capa"><span class="sombra-capa"></span></div>';
+        if (indice === TOTAL_LIVRO - 1) return '<div class="folha folha-especial folha-imagem"><img src="contra-capa.jpg" alt="Contra-capa"><span class="sombra-capa"></span></div>';
+
         return '<div class="folha">' + paginas[indice - 1] +
                '<div class="num">' + indice + '</div></div>';
       }
@@ -1316,7 +1405,15 @@
         abrirArquivo(e.dataTransfer.files[0]);
       });
 
-      entrarModo('livro');
+            // NOVO-ARQUIVO: clicar numa linha do sumário leva à página do título
+      document.addEventListener('click', function (e) {
+        const l = e.target.closest && e.target.closest('.sumario-linha[data-ir]');
+        if (!l || modo !== 'livro') return;
+        const s = Math.ceil(parseInt(l.getAttribute('data-ir'), 10) / 2);
+        if (estado.livro !== s) { estado.livro = s; desenhar(); }
+      });
+
+	  entrarModo('livro');
       ajustarEscala();
     })();
   </script>
