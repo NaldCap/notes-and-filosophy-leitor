@@ -8,7 +8,7 @@
        ALTERADO-MOBILE-TOQUE: celular = aparelho em que o toque é a entrada principal (celulares e tablets),
        seja qual for a largura da janela. No computador com mouse, o zoom e janelas estreitas nunca trocam de visão. -->
   <script>
-    window.__MQ_MOBILE = '(hover: none) and (pointer: coarse)'; // antes: '(max-width: 600px), (max-height: 500px) and (pointer: coarse)'
+    window.__MQ_MOBILE = '(hover: none) and (pointer: coarse)';
     document.documentElement.classList.toggle('mobile', window.matchMedia(window.__MQ_MOBILE).matches);
   </script>
   <title>Anotações e ideias</title>
@@ -25,10 +25,10 @@
       --teal-claro: #4fcdd0;
       --teal-bg: #e1f4f5;
       --escuro: #04343a;
-      --mesa: #e4e4e4; /* NOVO: cinza de fundo da área branca (a "mesa" do livro) */
-      --menu-largura: 147px; /* NOVO-MENU: largura dos botões do menu lateral */
-      --menu-gap: 48px;      /* NOVO-MENU: espaço entre o menu e o cartão */
-      --reserva-menu: calc(var(--menu-largura) + var(--menu-gap)); /* NOVO-MENU: espaço reservado de cada lado do cartão */
+      --mesa: #e4e4e4;
+      --menu-largura: 147px;
+      --menu-gap: 48px;
+      --reserva-menu: calc(var(--menu-largura) + var(--menu-gap));
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,11 +46,7 @@
     }
 
     /* ---------- Decorações ---------- */
-    .deco {
-      position: fixed;
-      pointer-events: none;
-      z-index: 0;
-    }
+    .deco { position: fixed; pointer-events: none; z-index: 0; }
     .deco-topo-esq   { top: 0;    left: 0;  width: 150px; }
     .deco-topo-dir   { top: 0;    right: 0; width: 160px; }
     .deco-base-esq   { bottom: 0; left: 0;  width: 240px; }
@@ -65,13 +61,13 @@
       display: flex;
       justify-content: safe center;
       align-items: center;
-      padding: 28px 16px 14px; /* ALTERADO: o espaço de baixo caiu de 40px para 14px (a barra de setas agora flutua por cima do cartão) */
+      padding: 28px 16px 14px;
     }
 
     .cartao {
       position: relative;
       aspect-ratio: 420 / 297;
-      width: var(--largura-cartao, min(calc(96vw - 2 * var(--reserva-menu)), calc((100vh - 180px) * 1.414))); /* ALTERADO-MENU: desconta o menu dos dois lados */
+      width: var(--largura-cartao, min(calc(96vw - 2 * var(--reserva-menu)), calc((100vh - 180px) * 1.414)));
       flex-shrink: 0;
       background: #fff;
       border: 4px solid var(--teal);
@@ -81,7 +77,6 @@
         0 0 0 1px rgba(18, 181, 184, 0.15);
     }
 
-    /* moldura interna (linha fina) */
     .cartao::before {
       content: "";
       position: absolute;
@@ -91,38 +86,33 @@
       pointer-events: none;
     }
 
-    /* Área branca: aqui entrará o "livro aberto" depois */
     .area-branca {
       position: absolute;
       inset: 14px;
       border-radius: 16px;
       overflow: hidden;
-      background: var(--mesa);   /* NOVO: fundo cinza */
-      container-type: size;      /* NOVO: permite medir a área com as unidades cqw / cqh */
-      display: flex;             /* NOVO: centraliza o livro dentro da área */
-      align-items: center;       /* NOVO */
-      justify-content: center;   /* NOVO */
+      background: var(--mesa);
+      container-type: size;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    /* ---------- Livro aberto (NOVO) ---------- */
+    /* ---------- Livro aberto ---------- */
     .livro {
       position: relative;
       flex: none;
-      /* largura: a menor entre 92% da largura da área e o que a altura (94%) permite,
-         sempre mantendo duas A4 lado a lado (420 / 297) */
       width: min(92cqw, calc(94cqh * 1.4142));
       aspect-ratio: 420 / 297;
-      /* ALTERADO-CAPA: a grade das duas páginas e a sombra foram para .miolo e .sombra (mais abaixo) */
     }
 
     .pagina {
       min-width: 0;
       background: #fff;
-      position: relative; /* EDIT-V1: a folha fixa é posicionada dentro da página */
-      overflow: hidden;   /* EDIT-V1: o que passar da borda da página é recortado */
+      position: relative;
+      overflow: hidden;
     }
 
-    /* sombra que escurece em direção à dobra (lombada) */
     .pagina-esq {
       background: linear-gradient(to right, #fff 0%, #fff 90%, #efefef 96%, #d6d6d6 100%);
     }
@@ -130,8 +120,7 @@
       background: linear-gradient(to left, #fff 0%, #fff 90%, #efefef 96%, #d6d6d6 100%);
     }
 
-    /* linha fina exatamente na dobra */
-    .miolo::after { /* ALTERADO-CAPA: antes era .livro::after */
+    .miolo::after {
       content: "";
       position: absolute;
       top: 0;
@@ -143,28 +132,22 @@
       pointer-events: none;
     }
 
-    /* ---------- Barra de setas (NOVO) ---------- */
+    /* ---------- Barra de setas ---------- */
     .controles {
-      /* ALTERADO-SETAS-FLUTUANTE: a barra agora flutua por cima do cartão, presa à janela (antes ficava
-         abaixo do cartão, no fluxo da página). Assim o cartão pode ocupar esse espaço e as setas
-         continuam visíveis mesmo com o zoom do navegador. */
       position: fixed;
       left: 50%;
-      /* NOVO-ZOOM-FIXO: --contra-zoom (1 / zoom do navegador) é calculado pelo script. A barra é reduzida
-         (ou aumentada) nessa proporção, a partir do meio da borda de baixo, e a folga do fundo também,
-         então ela mantém o mesmo tamanho e a mesma posição na tela em qualquer zoom. */
       bottom: calc(14px * var(--contra-zoom, 1));
       transform: translateX(-50%) scale(var(--contra-zoom, 1));
       transform-origin: 50% 100%;
       z-index: 20;
       display: flex;
       align-items: center;
-      width: 230px;  /* ALTERADO-SETAS: antes 276px */
-      height: 46px;  /* ALTERADO-SETAS: antes 56px */
+      width: 230px;
+      height: 46px;
       margin: 0;
       background: #ececec;
-      border-radius: 23px; /* ALTERADO-SETAS: metade da altura (antes 28px) */
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18); /* ALTERADO-SETAS-FLUTUANTE: destaca a barra sobre o cartão */
+      border-radius: 23px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
     }
 
     .controles button {
@@ -176,32 +159,21 @@
       border: 0;
       background: transparent;
       color: #1a1a1a;
-      border-radius: 23px; /* ALTERADO-SETAS: acompanha a pílula (antes 28px) */
+      border-radius: 23px;
       cursor: pointer;
     }
     .controles button:hover { background: rgba(0, 0, 0, 0.06); }
-    .controles button:focus-visible {
-      outline: 3px solid var(--teal);
-      outline-offset: -3px;
-    }
+    .controles button:focus-visible { outline: 3px solid var(--teal); outline-offset: -3px; }
 
-    .controles svg {
-      width: 28px;   /* ALTERADO-SETAS: antes 34px */
-      height: 28px;  /* ALTERADO-SETAS: antes 34px */
-      fill: currentColor;
-    }
+    .controles svg { width: 28px; height: 28px; fill: currentColor; }
     .controles .avancar svg { transform: scaleX(-1); }
 
-    .controles .sep {
-      width: 1px;
-      height: 24px;  /* ALTERADO-SETAS: antes 30px */
-      background: #555;
-    }
+    .controles .sep { width: 1px; height: 24px; background: #555; }
 
-    /* ---------- EDIT-V1: folha A4 de tamanho fixo, escalada ---------- */
-    /* A folha sempre tem 794 x 1123 px (A4). O script calcula --escala
-       (largura da página / 794) e a folha inteira é reduzida ou ampliada
-       com transform, então o texto quebra nas mesmas palavras em qualquer tela. */
+    .controles button:disabled { opacity: 0.3; cursor: default; }
+    .controles button:disabled:hover { background: transparent; }
+
+    /* ---------- Folha A4 de tamanho fixo, escalada ---------- */
     .folha {
       position: absolute;
       top: 0;
@@ -218,14 +190,9 @@
       color: #111;
       text-align: justify;
     }
-    .folha h2 {
-      font-size: 15px;
-      font-weight: 700;
-      text-align: left;
-      margin: 0 0 10px;
-    }
+    .folha h2 { font-size: 15px; font-weight: 700; text-align: left; margin: 0 0 10px; }
     .folha p { margin: 0 0 12px; }
-        .folha h2:not(:first-child) { margin-top: 0; padding-top: 22px; }
+    .folha h2:not(:first-child) { margin-top: 0; padding-top: 22px; }
     .folha h2:not(:first-child)[data-sem-espaco] { padding-top: 0; }
     .folha p[data-cont-next] { text-align-last: justify; }
     .folha .sumario-titulo { font-size: 22px; font-weight: 700; text-align: center; margin: 0 0 22px; }
@@ -245,27 +212,15 @@
       color: #555;
     }
 
-    /* NOVO-CONTRA: folhas especiais de exemplo (capa e contra-capa), sem número de página */
     .folha-especial {
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
     }
-    .folha-especial .titulo-especial {
-      font-size: 64px;
-      font-weight: 700;
-      letter-spacing: 1px;
-    }
+    .folha-especial .titulo-especial { font-size: 64px; font-weight: 700; letter-spacing: 1px; }
 
-    /* botão desativado (primeira e última abertura) */
-    .controles button:disabled { opacity: 0.3; cursor: default; }
-    .controles button:disabled:hover { background: transparent; }
-
-    /* ---------- NOVO-MENU: conjunto cartão + menu lateral ---------- */
-    /* O menu fica ao lado do cartão e acompanha o cartão, não a janela.
-       O espaço do menu é reservado dos DOIS lados do cartão, então o cartão
-       continua centralizado (e o visor usa o espaço do lado direito). */
+    /* ---------- Conjunto cartão + menu lateral ---------- */
     .conjunto-cartao {
       position: relative;
       flex-shrink: 0;
@@ -284,9 +239,6 @@
       gap: 34px;
     }
 
-    /* NOVO-VISOR: "página X / Y", à direita do cartão, preso ao cartão (como o menu, mas do outro lado).
-       A zona tem a largura de um botão do menu e centraliza o visor; se o texto crescer,
-       a caixa cresce para os dois lados e continua centralizada. */
     .visor-zona {
       position: absolute;
       top: 50%;
@@ -308,14 +260,13 @@
       align-items: center;
       justify-content: center;
       border-radius: 23px;
-      background: #ececec;       /* mesmo cinza da barra de setas */
+      background: #ececec;
       color: #9a9a9a;
       font-weight: 800;
       font-size: 15px;
       white-space: nowrap;
     }
 
-    /* estilo dos botões: baseado na imagem de referência */
     .menu-lateral button {
       height: 78px;
       padding: 0 12px;
@@ -333,14 +284,10 @@
       transition: background 0.15s;
     }
     .menu-lateral button:hover { background: var(--teal-claro); }
-    .menu-lateral button.ativo { background: var(--escuro); } /* modo atual */
-    .menu-lateral button:focus-visible {
-      outline: 3px solid var(--escuro);
-      outline-offset: 3px;
-    }
+    .menu-lateral button.ativo { background: var(--escuro); }
+    .menu-lateral button:focus-visible { outline: 3px solid var(--escuro); outline-offset: 3px; }
 
-    /* ---------- NOVO-MENU: painéis dentro da área branca ---------- */
-    /* (escolher/arrastar um PDF e aviso do editor) */
+    /* ---------- Escolher/arrastar um PDF ---------- */
     .solta {
       position: absolute;
       inset: 0;
@@ -371,19 +318,11 @@
     .solta-caixa strong { font-size: clamp(14px, 2.6cqw, 26px); font-weight: 800; }
     .solta-caixa span   { font-size: clamp(11px, 1.7cqw, 16px); }
     .solta.arrastando .solta-caixa { background: var(--teal-bg); border-style: solid; }
-    .solta-aviso { cursor: default; }
 
-    /* ---------- NOVO-MENU: páginas de PDF ---------- */
-    .folha-pdf {
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    /* ---------- Páginas de PDF ---------- */
+    .folha-pdf { padding: 0; display: flex; align-items: center; justify-content: center; }
     .folha-pdf canvas { display: block; background: #fff; }
 
-    /* a imagem do PDF cobre o fundo da página, então a sombra da lombada
-       é desenhada por cima (só no modo PDF) */
     .livro.modo-pdf .pagina-esq::after,
     .livro.modo-pdf .pagina-dir::after {
       content: "";
@@ -398,10 +337,7 @@
       background: linear-gradient(to left, rgba(0,0,0,0) 90%, rgba(0,0,0,0.06) 96%, rgba(0,0,0,0.16) 100%);
     }
 
-    /* ---------- NOVO-CAPA: miolo, sombra, capa e animações ---------- */
-    /* .miolo é o "livro por dentro": as duas páginas + a sombra.
-       Na capa ele é deslocado 25% para a esquerda, e a página da direita (a capa)
-       fica centralizada no lugar onde ficam as duas páginas. */
+    /* ---------- Miolo, sombra, capa e animações ---------- */
     .miolo {
       position: absolute;
       inset: 0;
@@ -410,13 +346,10 @@
       perspective: 150cqw;
     }
     .miolo.capa   { transform: translateX(-25%); }
-    .miolo.contra { transform: translateX(25%); } /* NOVO-CONTRA: espelho da capa; a folha única fica na esquerda e centralizada */
+    .miolo.contra { transform: translateX(25%); }
     .miolo.capa::after,
-    .miolo.contra::after { opacity: 0; } /* sem linha da lombada na capa e na contra-capa */
+    .miolo.contra::after { opacity: 0; }
 
-    /* ALTERADO-CAPA-C: a antiga "base branca" foi removida. A sombra agora é só um contorno,
-       sem preenchimento, em três camadas que trocam entre si por opacidade (nada cresce nem desliza):
-       livro aberto (as duas páginas), só a metade direita (capa) e só a metade esquerda (contra-capa). */
     .sombra {
       position: absolute;
       top: 0;
@@ -434,15 +367,12 @@
     .miolo.capa   .sombra-dir { opacity: 1; }
     .miolo.contra .sombra-esq { opacity: 1; }
 
-    .pagina.oculta { visibility: hidden; } /* some a página vazia: a da esquerda na capa, a da direita na contra-capa */
+    .pagina.oculta { visibility: hidden; }
 
-    /* as transições só existem enquanto a classe .animando está ligada,
-       assim trocar de modo ou redimensionar a janela nunca anima */
     .miolo.animando { transition: transform var(--duracao-virada, 650ms) ease-in-out; }
-    .miolo.animando .sombra { transition: opacity var(--duracao-virada, 650ms) ease-in-out; } /* ALTERADO-CAPA-C: antes animava "left" (a base branca crescendo) */
+    .miolo.animando .sombra { transition: opacity var(--duracao-virada, 650ms) ease-in-out; }
     .miolo.animando::after { transition: opacity var(--duracao-virada, 650ms) ease-in-out; }
 
-    /* a página que está virando (criada e removida pelo script) */
     .virada {
       position: absolute;
       top: 0;
@@ -451,8 +381,8 @@
       z-index: 5;
       transform-style: preserve-3d;
     }
-    .virada-proximo  { left: 50%; transform-origin: left center; }  /* gira em torno da lombada, para a esquerda */
-    .virada-anterior { left: 0;   transform-origin: right center; } /* gira em torno da lombada, para a direita */
+    .virada-proximo  { left: 50%; transform-origin: left center; }
+    .virada-anterior { left: 0;   transform-origin: right center; }
     .miolo.animando .virada { transition: transform var(--duracao-virada, 650ms) ease-in-out; }
 
     .virada .face {
@@ -464,12 +394,9 @@
     }
     .virada .verso { transform: rotateY(180deg); }
 
-    /* ---------- NOVO-MOBILE: visão do celular ---------- */
-    /* Tudo abaixo só vale com a classe "mobile" no <html> (colocada pelo script do começo da página).
-       No computador a barra de cima e o fundo do menu nem aparecem. */
+    /* ---------- Visão do celular ---------- */
     .barra-topo, .fundo-menu { display: none; }
 
-    /* a página não rola: o cartão é movido e ampliado pelo script (arrastar e pinça) */
     html.mobile, html.mobile body {
       height: 100%;
       overflow: hidden;
@@ -478,9 +405,8 @@
       -webkit-tap-highlight-color: transparent;
     }
     html.mobile main { position: static; z-index: auto; padding: 0; }
-    html.mobile .conjunto-cartao { display: contents; } /* menu, cartão e visor passam a ser posicionados direto na tela */
+    html.mobile .conjunto-cartao { display: contents; }
 
-    /* barra verde de cima, com o botão de três barrinhas */
     html.mobile .barra-topo {
       display: flex;
       align-items: center;
@@ -512,7 +438,6 @@
       background: #c8d1d9;
     }
 
-    /* visor centralizado na barra de cima */
     html.mobile .visor-zona {
       position: fixed;
       top: 0;
@@ -533,7 +458,6 @@
       background: #f4f4f4;
     }
 
-    /* cartão: tamanho e posição vêm do script (largura = --largura-cartao, posição = transform) */
     html.mobile .cartao {
       position: fixed;
       left: 0;
@@ -546,7 +470,6 @@
     html.mobile .cartao::before { inset: 5px; border-width: 1px; border-radius: 13px; }
     html.mobile .area-branca { inset: 9px; border-radius: 10px; }
 
-    /* barra de setas: flutua por cima do cartão, embaixo e centralizada */
     html.mobile .controles {
       position: fixed;
       left: 50%;
@@ -565,68 +488,46 @@
     html.mobile .controles svg { width: 22px; height: 22px; }
     html.mobile .controles .sep { height: 18px; }
 
-    /* menu: painel turquesa que abre pela esquerda, por cima de tudo (menos da barra de cima) */
     html.mobile .fundo-menu {
-      position: fixed;
-      top: 48px; left: 0; right: 0; bottom: 0;
-      z-index: 35;
-      background: transparent;
+      position: fixed; top: 48px; left: 0; right: 0; bottom: 0;
+      z-index: 35; background: transparent;
     }
     html.mobile.menu-aberto .fundo-menu { display: block; }
 
     html.mobile .menu-lateral {
-      position: fixed;
-      top: 48px;
-      bottom: 0;
-      left: 0;
-      width: 47%;
-      min-width: 150px;
-      padding: 10px 15px;
-      gap: 32px;
-      overflow-y: auto;
-      background: var(--teal);
+      position: fixed; top: 56px; left: 8px; bottom: auto;
+      width: 47%; min-width: 160px; max-height: calc(100% - 68px);
+      padding: 18px 15px 22px; gap: 32px; overflow-y: auto;
+      background: #f4f4f4; border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
       z-index: 40;
-      transform: translateX(-100%);
-      visibility: hidden;
-      transition: transform 0.22s ease-out, visibility 0s linear 0.22s;
+      transform: translateX(calc(-100% - 30px)); visibility: hidden;
+      transition: transform 0.25s ease, visibility 0s linear 0.25s;
     }
     html.mobile.menu-aberto .menu-lateral {
-      transform: none;
-      visibility: visible;
-      transition: transform 0.22s ease-out;
+      transform: none; visibility: visible; transition: transform 0.25s ease;
     }
     html.mobile .menu-lateral button {
-      position: relative;
-      flex: none;
-      height: 44px;
-      padding: 0 8px;
-      border-radius: 15px;
-      background: #0b9c9f;
-      font-size: 14px;
-      letter-spacing: -0.4px;
+      position: relative; flex: none; height: 46px; padding: 0 8px;
+      border-radius: 15px; background: #98c4c4; font-size: 14px; letter-spacing: -0.4px;
     }
-    html.mobile .menu-lateral button:hover { background: #0b9c9f; }
+    html.mobile .menu-lateral button:hover { background: #98c4c4; }
+    html.mobile .menu-lateral button:active { background: #86b9b9; }
     html.mobile .menu-lateral button.ativo,
-    html.mobile .menu-lateral button.ativo:hover { background: var(--escuro); }
-    html.mobile .menu-lateral br { display: none; } /* o texto quebra sozinho na largura do painel */
-    /* linha cinza embaixo de cada botão */
+    html.mobile .menu-lateral button.ativo:hover { background: #5aa0a0; }
+    html.mobile .menu-lateral br { display: none; }
     html.mobile .menu-lateral button::after {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: -17px;
-      width: 74%;
-      height: 2.5px;
-      transform: translateX(-50%);
-      border-radius: 2px;
-      background: #c8d1d9;
+      content: ""; position: absolute; left: 50%; bottom: -17px;
+      width: 74%; height: 3px; transform: translateX(-50%);
+      border-radius: 2px; background: #c8d1d9;
     }
 
     html.mobile .deco-topo-esq { width: 100px; }
     html.mobile .deco-topo-dir { width: 100px; }
     html.mobile .deco-base-esq { width: 150px; }
     html.mobile .deco-base-dir { width: 190px; }
-      /* NOVO-CAPA-IMG: imagem na capa e na contra-capa, com sombra de livro por cima */
+
+    /* ---------- Imagem na capa e na contra-capa ---------- */
     .folha-imagem { position: relative; padding: 0; overflow: hidden; }
     .folha-imagem img {
       position: absolute; inset: 0;
@@ -638,15 +539,15 @@
     .folha-imagem::before, .folha-imagem::after { z-index: 2; }
     .folha-imagem .sombra-capa { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 
-    /* NOVO-CAPA-DURA: capa dura com vinco na lombada e bordas abauladas */
+    /* ---------- Capa dura ---------- */
     :root {
       --capa-canto: 4px;
       --capa-canto-lombada: 1px;
       --capa-vinco-escuro: 0.10;
-      --capa-vinco-claro: 0.30;
-      --capa-borda: 0.10;
-      --capa-brilho: 0.25;
-      --capa-sombra: 0.18;
+      --capa-vinco-claro: 0.11;
+      --capa-borda: 0.08;
+      --capa-brilho: 0.10;
+      --capa-sombra: 0.32;
     }
 
     .pagina:has(> .folha-imagem img[alt="Capa"]),
@@ -656,12 +557,6 @@
     .pagina:has(> .folha-imagem img[alt="Contra-capa"]),
     .miolo.contra .sombra-esq {
       border-radius: var(--capa-canto) var(--capa-canto-lombada) var(--capa-canto-lombada) var(--capa-canto);
-    }
-
-    .miolo.capa .sombra-dir,
-    .miolo.contra .sombra-esq {
-      box-shadow: 0 2px 4px rgba(0,0,0,calc(var(--capa-sombra) * 0.8)),
-                  0 10px 22px rgba(0,0,0,var(--capa-sombra));
     }
 
     .folha-imagem .sombra-capa {
@@ -683,13 +578,13 @@
 
     .folha-imagem img[alt="Contra-capa"] + .sombra-capa {
       background: linear-gradient(to left,
-        rgba(0,0,0,calc(var(--capa-vinco-escuro) * 0.9)) 0%,
-        rgba(255,255,255,var(--capa-vinco-claro)) 0.8%,
-        rgba(0,0,0,0.03) 2%,
-        rgba(0,0,0,var(--capa-vinco-escuro)) 3.4%,
-        rgba(255,255,255,var(--capa-vinco-claro)) 4.2%,
-        rgba(255,255,255,0.06) 5.2%,
-        rgba(0,0,0,0.04) 6.5%,
+        rgba(255,255,255,var(--capa-vinco-claro)) 0%,
+        rgba(0,0,0,calc(var(--capa-vinco-escuro) * 0.9)) 0.8%,
+        rgba(255,255,255,0.03) 2%,
+        rgba(255,255,255,var(--capa-vinco-claro)) 3.4%,
+        rgba(0,0,0,var(--capa-vinco-escuro)) 4.2%,
+        rgba(0,0,0,0.06) 5.2%,
+        rgba(255,255,255,0.04) 6.5%,
         transparent 9%);
       box-shadow:
         inset 0 6px 6px -3px rgba(255,255,255,var(--capa-brilho)),
@@ -697,12 +592,61 @@
         inset 10px 0 14px -4px rgba(0,0,0,var(--capa-borda)),
         inset 0 0 0 2px rgba(0,0,0,0.06);
     }
+        /* NOVO-MENU-UNICO: no computador os botões ficam só no painel das três barrinhas */
+    .barra-editor, .painel-editor, .fundo-painel { display: none; }
+    html:not(.mobile) .menu-lateral { display: none; }
+    html:not(.mobile) .conjunto-cartao {
+      transform: translateX(var(--empurrao, 0px));
+      transition: transform 0.35s ease;
+    }
+    html:not(.mobile) .barra-editor {
+      display: flex; align-items: center;
+      position: fixed; top: 8px; left: clamp(8px, 4.6vw, 57px);
+      height: 58px; z-index: 30;
+      background: #f4f4f4; border-radius: 18px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    }
+    .ed-menu {
+      flex: none; width: 58px; height: 58px; border: 0; border-radius: 16px;
+      background: transparent; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 5px; cursor: pointer;
+    }
+    .ed-menu span { display: block; width: 34px; height: 4px; border-radius: 2px; background: #b4bcc4; }
+    .ed-menu:hover { background: rgba(0, 0, 0, 0.05); }
+    .ed-menu:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+    html.painel-aberto .ed-menu { background: #cdcdcd; }
+
+    html:not(.mobile) .fundo-painel { display: block; position: fixed; inset: 0; z-index: 26; visibility: hidden; }
+    html.painel-aberto:not(.mobile) .fundo-painel { visibility: visible; }
+    html:not(.mobile) .painel-editor {
+      display: block; position: fixed; top: 83px; left: 9px;
+      width: 231px; height: min(543px, calc(100vh - 95px));
+      padding: 24px 0 0; z-index: 28;
+      background: #f4f4f4; border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14); overflow: hidden;
+      transform: translateX(calc(-100% - 40px)); visibility: hidden;
+      transition: transform 0.35s ease, visibility 0s 0.35s;
+    }
+    html.painel-aberto:not(.mobile) .painel-editor {
+      transform: none; visibility: visible;
+      transition: transform 0.35s ease, visibility 0s;
+    }
+    .pe-item { display: flex; flex-direction: column; align-items: center; gap: 11px; margin-bottom: 13px; }
+    .pe-item button {
+      width: 188px; height: 59px; padding: 0 14px; border: 0; border-radius: 17px;
+      background: #98c4c4; color: #fff;
+      font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+      font-weight: 800; font-size: 16px; line-height: 1.05; letter-spacing: -0.4px; cursor: pointer;
+    }
+    .pe-item button:hover { background: #86b9b9; }
+    .pe-item button.ativo { background: #5aa0a0; }
+    .pe-item button:focus-visible { outline: 3px solid var(--escuro); outline-offset: 2px; }
+    .pe-item i { display: block; width: 140px; height: 3px; border-radius: 2px; background: #c8d1d9; }
   </style>
 </head>
 
 <body>
 
-  <!-- Quadrados decorativos: topo esquerdo -->
   <svg class="deco deco-topo-esq" viewBox="0 0 150 110" xmlns="http://www.w3.org/2000/svg">
     <g fill="#e1f4f5">
       <rect x="-28" y="-28" width="52" height="52" rx="10" transform="rotate(45 -2 -2)"/>
@@ -712,7 +656,6 @@
     </g>
   </svg>
 
-  <!-- Quadrados decorativos: topo direito -->
   <svg class="deco deco-topo-dir" viewBox="0 0 160 170" xmlns="http://www.w3.org/2000/svg">
     <g fill="#e1f4f5">
       <rect x="55"  y="5"   width="52" height="52" rx="10" transform="rotate(45 81 31)" />
@@ -722,26 +665,34 @@
     </g>
   </svg>
 
-  <!-- Onda inferior esquerda -->
   <svg class="deco deco-base-esq" viewBox="0 0 240 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 40 L0 6 C60 0 150 10 240 40 Z" fill="#12b5b8"/>
   </svg>
 
-  <!-- Onda inferior direita -->
   <svg class="deco deco-base-dir" viewBox="0 0 300 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M0 100 C120 90 230 50 300 0 L300 100 Z" fill="#12b5b8"/>
   </svg>
 
-  <!-- NOVO-MOBILE: barra de cima e fundo do menu (só aparecem na visão do celular) -->
+  <!-- barra de cima e fundo do menu (só aparecem no celular) -->
   <header class="barra-topo" id="barraTopo">
     <button type="button" class="btn-menu" id="btnMenu" aria-label="Abrir menu" aria-expanded="false" aria-controls="menuLateral">
       <span></span><span></span><span></span>
     </button>
   </header>
+    <!-- NOVO-MENU-UNICO: barra de cima e painel (só no computador) -->
+  <header class="barra-editor">
+    <button type="button" class="ed-menu" id="btnEdMenu" aria-label="Abrir menu" aria-expanded="false" aria-controls="painelEditor">
+      <span></span><span></span><span></span>
+    </button>
+  </header>
+  <div class="fundo-painel" id="fundoPainel"></div>
+  <aside class="painel-editor" id="painelEditor" aria-label="Modos de leitura">
+    <div class="pe-item"><button type="button" id="peLivro" class="ativo">Livro</button><i></i></div>
+    <div class="pe-item"><button type="button" id="pePdf">Ler um PDF como um livro</button><i></i></div>
+  </aside>
   <div class="fundo-menu" id="fundoMenu"></div>
 
   <main>
-    <!-- NOVO-MENU: conjunto = menu lateral + cartão (tudo preso ao cartão) -->
     <div class="conjunto-cartao">
 
       <div class="menu-lateral" id="menuLateral" role="group" aria-label="Modos de leitura">
@@ -751,9 +702,7 @@
 
       <div class="cartao">
         <div class="area-branca" id="areaBranca">
-          <!-- livro aberto com as duas páginas A4 -->
           <div class="livro" id="livro">
-            <!-- NOVO-CAPA: o miolo guarda a sombra e as duas páginas -->
             <div class="miolo" id="miolo">
               <div class="sombra sombra-livro"></div>
               <div class="sombra sombra-dir"></div>
@@ -763,7 +712,6 @@
             </div>
           </div>
 
-          <!-- NOVO-MENU: escolher ou arrastar um PDF -->
           <div class="solta" id="solta">
             <label class="solta-caixa" for="arquivoPdf">
               <strong id="soltaTitulo">Arraste um PDF aqui</strong>
@@ -774,7 +722,6 @@
         </div>
       </div>
 
-      <!-- NOVO-VISOR: página atual / total, preso ao cartão -->
       <div class="visor-zona" id="visorZona">
         <div class="visor" id="visor" role="status" aria-label="Página atual">1 / 1</div>
       </div>
@@ -782,7 +729,6 @@
     </div>
   </main>
 
-  <!-- NOVO: barra com os botões de voltar e avançar página -->
   <nav class="controles" id="controles" aria-label="Navegação do livro">
     <button type="button" class="voltar" id="btnVoltar" aria-label="Página anterior">
       <svg viewBox="0 0.5 24 24" aria-hidden="true"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>
@@ -793,56 +739,42 @@
     </button>
   </nav>
 
+  <!-- ===================== MEDIDAS DO CARTÃO (COMPUTADOR) ===================== -->
   <script>
     (function () {
       const raiz = document.documentElement;
       let dprAnterior = window.devicePixelRatio;
       let largura = 0;
 
-      // NOVO: elementos usados para medir o espaço que o cartão pode ocupar
       const principal = document.querySelector('main');
-      const conjunto = document.querySelector('.conjunto-cartao'); // NOVO-MENU
+      const conjunto = document.querySelector('.conjunto-cartao');
 
-      // NOVO-MENU: espaço reservado de cada lado do cartão para o menu (em pixels)
       function reservaLateral() {
         return parseFloat(getComputedStyle(conjunto).paddingLeft) || 0;
       }
 
-      // NOVO: soma, em pixels, tudo o que fica na vertical fora do cartão.
-      // ALTERADO-SETAS-FLUTUANTE: sobraram só os espaços do main, porque a barra de setas
-      // flutua por cima do cartão e não ocupa mais espaço na página.
       function alturaReservada() {
         const p = getComputedStyle(principal);
-        return parseFloat(p.paddingTop) + parseFloat(p.paddingBottom)
-          + 2; // folga de segurança para não aparecer barra de rolagem
+        return parseFloat(p.paddingTop) + parseFloat(p.paddingBottom) + 2;
       }
 
-      // Faz a página ficar tão larga quanto o cartão (+ menu/visor + margens do main),
-      // assim o conjunto continua centralizado em relação ao cartão e não à janela.
       function ajustarPagina() {
-        if (raiz.classList.contains('mobile')) { document.body.style.minWidth = ''; return; } // NOVO-MOBILE: a página não rola no celular
-        const necessaria = largura + 2 * reservaLateral() + 32; // ALTERADO-MENU: inclui o menu dos dois lados
-        document.body.style.minWidth =
-          necessaria > window.innerWidth ? necessaria + 'px' : '';
+        if (raiz.classList.contains('mobile')) { document.body.style.minWidth = ''; return; }
+        const necessaria = largura + 2 * reservaLateral() + 32;
+        document.body.style.minWidth = necessaria > window.innerWidth ? necessaria + 'px' : '';
       }
 
       function calcular() {
-        if (raiz.classList.contains('mobile')) return; // NOVO-MOBILE: no celular o tamanho do cartão é definido pelo zoom (script do celular)
+        if (raiz.classList.contains('mobile')) return;
         largura = Math.min(
-          window.innerWidth * 0.96 - 2 * reservaLateral(), // ALTERADO-MENU: desconta o menu dos dois lados
-          (window.innerHeight - alturaReservada()) * 1.414 // ALTERADO: antes era (window.innerHeight - 110)
+          window.innerWidth * 0.96 - 2 * reservaLateral(),
+          (window.innerHeight - alturaReservada()) * 1.414
         );
-        largura = Math.max(largura, 240); // NOVO-MENU: tamanho mínimo, para o cartão nunca sumir em janelas muito estreitas
+        largura = Math.max(largura, 240);
         raiz.style.setProperty('--largura-cartao', largura + 'px');
       }
 
-      // NOVO-ZOOM-FIXO: a barra de setas mantém o mesmo tamanho na tela em qualquer zoom do navegador.
-      // Não existe CSS que ignore o zoom, então o script mede o zoom e aplica o inverso em --contra-zoom.
-      //  - Chrome, Edge e outros: zoom = largura da janela / largura da página (a largura da janela não muda com o zoom).
-      //  - Firefox: essa conta não funciona; usa a variação do devicePixelRatio desde que a página abriu
-      //    (assume que a página abriu com zoom de 100%).
-      // O resultado é arredondado para os níveis de zoom padrão; o que ficar longe de todos (por exemplo,
-      // ferramentas de desenvolvedor encaixadas na janela) é ignorado e vale 100%.
+      // a barra de setas mantém o mesmo tamanho na tela em qualquer zoom do navegador
       const NIVEIS_ZOOM = [0.25, 0.3, 0.33, 0.5, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.2, 1.25, 1.33, 1.5, 1.7, 1.75, 2, 2.4, 2.5, 3, 4, 5];
       const ehFirefox = /firefox/i.test(navigator.userAgent);
       const dprBase = window.devicePixelRatio;
@@ -863,7 +795,7 @@
       }
 
       function aplicarContraZoom() {
-        const z = raiz.classList.contains('mobile') ? 1 : zoomDoNavegador(); // no celular não há zoom do navegador
+        const z = raiz.classList.contains('mobile') ? 1 : zoomDoNavegador();
         raiz.style.setProperty('--contra-zoom', String(+(1 / z).toFixed(4)));
       }
 
@@ -871,8 +803,6 @@
       ajustarPagina();
       aplicarContraZoom();
 
-      // NOVO: quando as fontes terminam de carregar, recalcula uma vez
-      // para o cartão continuar cabendo sem rolagem.
       if (document.fonts && document.fonts.ready) {
         document.fonts.ready.then(function () {
           calcular();
@@ -883,24 +813,22 @@
 
       window.addEventListener('resize', function () {
         if (window.devicePixelRatio !== dprAnterior) {
-          dprAnterior = window.devicePixelRatio; // foi zoom: mantém o tamanho
+          dprAnterior = window.devicePixelRatio;
         } else {
-          calcular(); // foi redimensionamento da janela: recalcula
+          calcular();
         }
         ajustarPagina();
-        aplicarContraZoom(); // NOVO-ZOOM-FIXO
+        aplicarContraZoom();
       });
     })();
   </script>
 
-    <script src="conteudo.js"></script>
+  <script src="conteudo.js"></script>
 
   <!-- ===================== LIVRO, CAPA, MENU E MODO PDF ===================== -->
   <script>
     (function () {
-      // ---------- 1) O LIVRO: uma lista de páginas prontas ----------
-      // Cada item é o conteúdo (HTML) de uma folha A4.
-      // No futuro, é o editor que vai gerar essa lista ao exportar.
+      // ---------- 1) O LIVRO: páginas de exemplo (substituídas pelo conteudo.js) ----------
       const L1 = 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna. Nunc viverra imperdiet enim.';
       const L2 = 'Fusce est. Vivamus a tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede.';
       const L3 = 'Vivamus a tellus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci. Aenean nec lorem.';
@@ -915,48 +843,78 @@
         p(L4) + p(L3) + p(L2) + p(L1) + p(L1 + ' ' + L3) + p(L2) + p(L4) + p(L1) + p(L3) + p(L2),
         '<h2>5 Quinto Tópico</h2>' + p(L1) + p(L2)
       ];
-      // NOVO-CONTRA: o livro de exemplo tem uma folha de capa no começo e uma de contra-capa no fim
-            // NOVO-ARQUIVO: se o conteudo.js existir, as páginas dele substituem o texto de exemplo
       if (window.LIVRO_CONTEUDO && Array.isArray(window.LIVRO_CONTEUDO.paginas) && window.LIVRO_CONTEUDO.paginas.length) {
         Array.prototype.splice.apply(paginas, [0, paginas.length].concat(window.LIVRO_CONTEUDO.paginas));
       }
+      // ---------- 1b) Sumário automático (gerado a partir dos títulos <h2>) ----------
+      (function gerarSumario() {
+        // se o conteudo.js já trouxer um sumário, não cria outro
+        if (paginas.some(function (h) { return typeof h === 'string' && h.indexOf('sumario-linha') !== -1; })) return;
 
-	  const TOTAL_LIVRO = paginas.length + 2;
+        const itens = [];
+        const tmp = document.createElement('div');
+        paginas.forEach(function (html, k) {
+          if (typeof html !== 'string') return;
+          tmp.innerHTML = html;
+          tmp.querySelectorAll('h2').forEach(function (h) {
+            itens.push({ texto: h.textContent.trim(), k: k });
+          });
+        });
+        if (!itens.length) return;
+
+        const POR_PAGINA = 28;                               // linhas por página de sumário
+        const nSum = Math.ceil(itens.length / POR_PAGINA);   // quantas páginas o sumário ocupa
+        const esc = function (t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+
+        const folhas = [];
+        for (let f = 0; f < nSum; f++) {
+          let h = f === 0 ? '<div class="sumario-titulo">Sumário</div>' : '';
+          itens.slice(f * POR_PAGINA, (f + 1) * POR_PAGINA).forEach(function (it) {
+            const num = it.k + nSum + 1; // número que aparece no rodapé da página de destino
+            h += '<div class="sumario-linha" data-ir="' + num + '">' +
+                   '<span class="s-texto">' + esc(it.texto) + '</span>' +
+                   '<span class="s-pontos"></span>' +
+                   '<span class="s-pag">' + num + '</span>' +
+                 '</div>';
+          });
+          folhas.push(h);
+        }
+        Array.prototype.splice.apply(paginas, [0, 0].concat(folhas)); // sumário logo após a capa
+      })();
+      const TOTAL_LIVRO = paginas.length + 2; // + capa e contra-capa
 
       // ---------- 2) Elementos ----------
       const livro = document.getElementById('livro');
-      const miolo = document.getElementById('miolo'); // NOVO-CAPA
+      const miolo = document.getElementById('miolo');
       const esq = document.getElementById('paginaEsq');
       const dir = document.getElementById('paginaDir');
-      const visor = document.getElementById('visor');           // NOVO-VISOR
-      const visorZona = document.getElementById('visorZona');   // NOVO-VISOR
+      const visor = document.getElementById('visor');
+      const visorZona = document.getElementById('visorZona');
       const btnVoltar = document.getElementById('btnVoltar');
       const btnAvancar = document.getElementById('btnAvancar');
 
       const btnLivro = document.getElementById('btnLivro');
       const btnPdf = document.getElementById('btnPdf');
-      const btnEditor = document.getElementById('btnEditor');     // só existe na versão do editor
-      const avisoEditor = document.getElementById('avisoEditor'); // só existe na versão do editor
       const solta = document.getElementById('solta');
       const soltaTitulo = document.getElementById('soltaTitulo');
       const soltaTexto = document.getElementById('soltaTexto');
       const inputPdf = document.getElementById('arquivoPdf');
 
-      const LARGURA_FOLHA = 794; // A4 a 96 dpi (794 x 1123 px)
+      const LARGURA_FOLHA = 794;
       const ALTURA_FOLHA = 1123;
-      const RESOLUCAO_PDF = 2;   // o PDF é desenhado com o dobro do tamanho da folha, para ficar nítido
-      const DURACAO = 650;       // NOVO-CAPA: duração (ms) da animação de virar página, abrir e fechar
+      const RESOLUCAO_PDF = 2;
+      const DURACAO = 650;
       livro.style.setProperty('--duracao-virada', DURACAO + 'ms');
 
       // ---------- 3) Estado ----------
-      let modo = 'livro';                  // 'livro' | 'pdf' | 'editor'
-      const estado = { livro: 0, pdf: 0 }; // abertura atual de cada modo (0 = capa)
-      let pdfDoc = null;                   // PDF carregado (some ao atualizar a página)
-      let zonaOcupada = false;             // true enquanto carrega ou mostra erro: mantém a área de "arraste um PDF" visível
-      let tokenDesenho = 0;                // evita que um desenho antigo termine depois de um novo
-      let cargaAtual = 0;                  // evita que um PDF antigo termine depois de um novo
-      let animacao = null;                 // NOVO-CAPA: animação de virar página em andamento
-      let esperando = false;               // NOVO-CAPA: true enquanto as páginas da próxima abertura estão sendo preparadas
+      let modo = 'livro';                  // 'livro' | 'pdf'
+      const estado = { livro: 0, pdf: 0 };
+      let pdfDoc = null;
+      let zonaOcupada = false;
+      let tokenDesenho = 0;
+      let cargaAtual = 0;
+      let animacao = null;
+      let esperando = false;
 
       const TITULO_PADRAO = 'Arraste um PDF aqui';
       const TEXTO_PADRAO = 'ou clique para escolher um arquivo do seu computador';
@@ -966,14 +924,8 @@
       }
 
       // ---------- 4) Páginas e aberturas ----------
-      // Aberturas (os pares de páginas visíveis). A primeira folha é a capa e a última é a contra-capa:
-      //   0         = capa, sozinha e centralizada;
-      //   1, 2, ... = páginas internas de duas em duas (páginas 2 e 3, 4 e 5...);
-      //   última    = contra-capa, sozinha e centralizada (espelho da capa).
-      // Se o número de páginas internas for ímpar, a última abertura interna fica com
-      // a página da direita em branco (folha de guarda), antes da contra-capa.
       function totalPaginas() {
-        if (modo === 'livro') return TOTAL_LIVRO; // ALTERADO-CONTRA: inclui capa e contra-capa
+        if (modo === 'livro') return TOTAL_LIVRO;
         if (modo === 'pdf' && pdfDoc) return pdfDoc.numPages;
         return 0;
       }
@@ -981,11 +933,10 @@
       function totalAberturas() {
         const n = totalPaginas();
         if (n === 0) return 0;
-        if (n === 1) return 1; // só a capa
+        if (n === 1) return 1;
         return 2 + Math.ceil((n - 2) / 2);
       }
 
-      // quais páginas (índices a partir de 0) aparecem na abertura s; null = em branco
       function paginasDe(s) {
         const n = totalPaginas();
         if (s <= 0) return { capa: true, contra: false, esq: null, dir: n > 0 ? 0 : null };
@@ -995,24 +946,19 @@
       }
 
       // ---------- 5) Folha de texto do livro ----------
-      // ALTERADO-CONTRA: índice 0 = capa, último = contra-capa (sem número); as páginas de texto
-      // são numeradas a partir de 1
       function montarFolha(indice) {
-        if (indice < 0 || indice >= TOTAL_LIVRO) return ''; // página em branco
-                // ALTERADO-CAPA-IMG: mantém a classe folha-especial para não perder as sombras
+        if (indice < 0 || indice >= TOTAL_LIVRO) return '';
         if (indice === 0) return '<div class="folha folha-especial folha-imagem"><img src="capa.png" alt="Capa"><span class="sombra-capa"></span></div>';
         if (indice === TOTAL_LIVRO - 1) return '<div class="folha folha-especial folha-imagem"><img src="contra-capa.png" alt="Contra-capa"><span class="sombra-capa"></span></div>';
-
         return '<div class="folha">' + paginas[indice - 1] +
                '<div class="num">' + indice + '</div></div>';
       }
 
-      // ---------- 6) Leitor de PDF (biblioteca PDF.js, carregada pela internet) ----------
+      // ---------- 6) Leitor de PDF (PDF.js) ----------
       const PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
       const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
       let promessaPdfJs = null;
 
-      // só baixa a biblioteca quando o leitor realmente abre um PDF
       function carregarPdfJs() {
         const existente = window.pdfjsLib || window['pdfjs-dist/build/pdf'];
         if (existente) return Promise.resolve(existente);
@@ -1033,9 +979,7 @@
         return promessaPdfJs;
       }
 
-      // ALTERADO-CAPA: as folhas do PDF agora ficam guardadas (cache), assim a mesma folha
-      // pode ser movida para a página que está virando e as próximas já ficam prontas.
-      const cachePdf = new Map(); // índice da página (0, 1, 2...) -> Promise da folha (elemento)
+      const cachePdf = new Map();
 
       function liberar(folha) {
         if (!folha) return;
@@ -1049,7 +993,6 @@
         cachePdf.clear();
       }
 
-      // guarda só as folhas da abertura atual e das vizinhas
       function podarCachePdf(s) {
         const manter = new Set();
         [s - 1, s, s + 1].forEach(function (k) {
@@ -1065,7 +1008,6 @@
         });
       }
 
-      // desenha a página `idx` (a partir de 0) do PDF dentro de uma folha A4, sem distorcer
       function obterFolhaPdf(idx) {
         if (!pdfDoc || idx < 0 || idx >= pdfDoc.numPages) return Promise.resolve(null);
         if (!cachePdf.has(idx)) {
@@ -1084,13 +1026,12 @@
             return pagina.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise
               .then(function () { return folha; });
           });
-          promessa.catch(function () { cachePdf.delete(idx); }); // falhou: tenta de novo na próxima vez
+          promessa.catch(function () { cachePdf.delete(idx); });
           cachePdf.set(idx, promessa);
         }
         return cachePdf.get(idx);
       }
 
-      // deixa prontas as folhas das aberturas vizinhas, para virar sem espera
       function precarregar(s) {
         const T = totalAberturas();
         [s + 1, s - 1].forEach(function (k) {
@@ -1153,7 +1094,6 @@
         return modo === 'pdf' && (!pdfDoc || zonaOcupada);
       }
 
-      // devolve uma Promise com a folha (elemento) da página `idx`, ou null se for página em branco
       function obterFolha(idx, m) {
         if (idx === null) return Promise.resolve(null);
         if (m === 'pdf') return obterFolhaPdf(idx);
@@ -1170,17 +1110,16 @@
       function atualizarBotoes() {
         const n = totalPaginas();
         const T = totalAberturas();
-        const s = (modo === 'livro' || modo === 'pdf') ? estado[modo] : 0;
+        const s = estado[modo];
         const zona = zonaVisivel();
         btnVoltar.disabled = (n === 0) || zona || s <= 0;
         btnAvancar.disabled = (n === 0) || zona || s >= T - 1;
         atualizarVisor();
       }
 
-      // NOVO-VISOR: "2–3 / 7" (as duas páginas visíveis / total de folhas); "1 / 7" na capa
       function atualizarVisor() {
         const n = totalPaginas();
-        const mostrar = (modo === 'livro' || modo === 'pdf') && n > 0 && !zonaVisivel();
+        const mostrar = n > 0 && !zonaVisivel();
         visorZona.classList.toggle('escondido', !mostrar);
         if (!mostrar) return;
         const pg = paginasDe(estado[modo]);
@@ -1190,15 +1129,14 @@
         visor.textContent = (nums.length === 2 ? nums[0] + '–' + nums[1] : nums[0]) + ' / ' + n;
       }
 
-      // mostra a abertura atual de uma vez, sem animação
       function desenharEstatico() {
         const token = ++tokenDesenho;
         const m = modo;
         const n = totalPaginas();
-        const s = (m === 'livro' || m === 'pdf') ? estado[m] : 0;
+        const s = estado[m];
         const pg = paginasDe(s);
         const emCapa = n > 0 && pg.capa;
-        const emContra = n > 0 && pg.contra; // NOVO-CONTRA
+        const emContra = n > 0 && pg.contra;
 
         miolo.classList.remove('animando');
         miolo.classList.toggle('capa', emCapa);
@@ -1207,7 +1145,6 @@
         dir.classList.toggle('oculta', emContra);
         livro.classList.toggle('modo-pdf', m === 'pdf');
         solta.classList.toggle('visivel', zonaVisivel());
-        if (avisoEditor) avisoEditor.classList.toggle('visivel', m === 'editor');
         atualizarBotoes();
 
         esq.textContent = '';
@@ -1222,7 +1159,6 @@
         }).catch(function () {});
       }
 
-      // interrompe uma animação em andamento (usado quando o modo muda)
       function cancelarAnimacao() {
         if (!animacao) return;
         clearTimeout(animacao.timer);
@@ -1237,7 +1173,6 @@
         desenharEstatico();
       }
 
-      // monta a página que vira: frente e verso
       function criarVirada(tipo, frente, verso) {
         const v = document.createElement('div');
         v.className = 'virada virada-' + tipo;
@@ -1252,14 +1187,13 @@
         return v;
       }
 
-      // anima a passagem da abertura `de` para a abertura `para`
       function virar(de, para) {
         const m = modo;
         const token = ++tokenDesenho;
         estado[m] = para;
         atualizarBotoes();
 
-        if (movimentoReduzido()) { desenharEstatico(); return; } // quem pediu menos movimento não vê animação
+        if (movimentoReduzido()) { desenharEstatico(); return; }
 
         const A = paginasDe(de);
         const B = paginasDe(para);
@@ -1279,7 +1213,6 @@
           idxs.forEach(function (i, k) { f[i] = lista[k]; });
           const el = function (i) { return i === null ? null : f[i]; };
 
-          // avançar: a página da direita vira para a esquerda; voltar: a da esquerda vira para a direita
           let frente, verso, estEsq, estDir;
           if (proximo) {
             frente = el(A.dir); verso = el(B.esq); estEsq = el(A.esq); estDir = el(B.dir);
@@ -1287,29 +1220,27 @@
             frente = el(A.esq); verso = el(B.dir); estEsq = el(B.esq); estDir = el(A.dir);
           }
 
-          // estado inicial: o que fica parado embaixo + a página que vai virar por cima
           colocar(esq, estEsq);
           colocar(dir, estDir);
           esq.classList.toggle('oculta', A.capa || B.capa);
-          dir.classList.toggle('oculta', A.contra || B.contra); // NOVO-CONTRA
+          dir.classList.toggle('oculta', A.contra || B.contra);
           const v = criarVirada(proximo ? 'proximo' : 'anterior', frente, verso);
           miolo.appendChild(v);
 
-          // liga as transições, registra o estado inicial e então muda para o final
           miolo.classList.add('animando');
           void miolo.offsetWidth;
-          miolo.classList.toggle('capa', B.capa);     // abertura/fechamento: o livro recentra e a sombra troca por opacidade
-          miolo.classList.toggle('contra', B.contra); // NOVO-CONTRA: o mesmo, espelhado
+          miolo.classList.toggle('capa', B.capa);
+          miolo.classList.toggle('contra', B.contra);
           v.style.transform = proximo ? 'rotateY(-180deg)' : 'rotateY(180deg)';
 
           const concluir = function () {
             if (!animacao || animacao.v !== v) return;
             clearTimeout(animacao.timer);
             animacao = null;
-            if (proximo) colocar(esq, verso); else colocar(dir, verso); // o verso vira a página parada
+            if (proximo) colocar(esq, verso); else colocar(dir, verso);
             if (v.parentNode) v.parentNode.removeChild(v);
             esq.classList.toggle('oculta', B.capa);
-            dir.classList.toggle('oculta', B.contra); // NOVO-CONTRA
+            dir.classList.toggle('oculta', B.contra);
             miolo.classList.remove('animando');
             if (m === 'pdf') { podarCachePdf(para); precarregar(para); }
           };
@@ -1321,9 +1252,8 @@
       }
 
       function ir(delta) {
-        if (modo !== 'livro' && modo !== 'pdf') return;
         if (zonaVisivel() || esperando) return;
-        if (animacao) animacao.concluir(); // se apertou de novo no meio da animação, conclui a anterior na hora
+        if (animacao) animacao.concluir();
         const T = totalAberturas();
         if (T === 0) return;
         const de = estado[modo];
@@ -1337,26 +1267,19 @@
         btnLivro.classList.toggle('ativo', modo === 'livro');
         btnLivro.setAttribute('aria-pressed', modo === 'livro');
         btnPdf.classList.toggle('ativo', modo === 'pdf');
-        btnPdf.setAttribute('aria-pressed', modo === 'pdf');
-        if (btnEditor) {
-          btnEditor.classList.toggle('ativo', modo === 'editor');
-          btnEditor.setAttribute('aria-pressed', modo === 'editor');
-        }
+                btnPdf.setAttribute('aria-pressed', modo === 'pdf');
+        if (typeof marcarPainel === 'function' && peLivro) marcarPainel();
         desenhar();
       }
 
-      // ---------- 8) Escala: largura real da página / largura A4 fixa ----------
+      // ---------- 8) Escala ----------
       function ajustarEscala() {
-        const escala = esq.clientWidth / LARGURA_FOLHA;
-        livro.style.setProperty('--escala', escala);
+        livro.style.setProperty('--escala', esq.clientWidth / LARGURA_FOLHA);
       }
-
-      if (window.ResizeObserver) {
-        new ResizeObserver(ajustarEscala).observe(livro);
-      }
+      if (window.ResizeObserver) new ResizeObserver(ajustarEscala).observe(livro);
       window.addEventListener('resize', ajustarEscala);
 
-      // ---------- 9) Botões de navegação e teclado ----------
+      // ---------- 9) Navegação ----------
       btnVoltar.addEventListener('click', function () { ir(-1); });
       btnAvancar.addEventListener('click', function () { ir(1); });
       document.addEventListener('keydown', function (e) {
@@ -1364,34 +1287,29 @@
         if (e.key === 'ArrowRight') ir(1);
       });
 
-      // ---------- 10) Botões do menu lateral ----------
+      // ---------- 10) Menu ----------
       btnLivro.addEventListener('click', function () { entrarModo('livro'); });
 
       btnPdf.addEventListener('click', function () {
         const jaEstavaEmPdf = (modo === 'pdf');
         entrarModo('pdf');
-        // primeira vez, ou clicou de novo estando em PDF: abre a escolha de arquivo
         if (jaEstavaEmPdf || !pdfDoc) inputPdf.click();
       });
 
-      if (btnEditor) {
-        btnEditor.addEventListener('click', function () { entrarModo('editor'); });
-      }
-
       inputPdf.addEventListener('change', function () {
         const arquivo = inputPdf.files && inputPdf.files[0];
-        inputPdf.value = ''; // permite escolher o mesmo arquivo de novo
+        inputPdf.value = '';
         abrirArquivo(arquivo);
       });
 
-      // ---------- 11) Arrastar e soltar um PDF em qualquer lugar da página ----------
+      // ---------- 11) Arrastar e soltar um PDF ----------
       function temArquivos(e) {
         return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') !== -1;
       }
       ['dragenter', 'dragover'].forEach(function (nome) {
         window.addEventListener(nome, function (e) {
           if (!temArquivos(e)) return;
-          e.preventDefault(); // impede o navegador de abrir o arquivo e sair da página
+          e.preventDefault();
           solta.classList.add('arrastando');
         });
       });
@@ -1405,7 +1323,7 @@
         abrirArquivo(e.dataTransfer.files[0]);
       });
 
-            // NOVO-ARQUIVO: clicar numa linha do sumário leva à página do título
+      // ---------- 12) Sumário: clicar numa linha leva à página ----------
       document.addEventListener('click', function (e) {
         const l = e.target.closest && e.target.closest('.sumario-linha[data-ir]');
         if (!l || modo !== 'livro') return;
@@ -1413,12 +1331,59 @@
         if (estado.livro !== s) { estado.livro = s; desenhar(); }
       });
 
-	  entrarModo('livro');
+                // ---------- 13) NOVO-MENU-UNICO: painel das três barrinhas (computador) ----------
+
+      const raizEd = document.documentElement;
+      const cartaoEl = document.querySelector('.cartao');
+      const btnEdMenu = document.getElementById('btnEdMenu');
+      const painelEditor = document.getElementById('painelEditor');
+      const fundoPainel = document.getElementById('fundoPainel');
+      const peLivro = document.getElementById('peLivro');
+      const pePdf = document.getElementById('pePdf');
+      const FOLGA_PAINEL = 58;
+      let painelAberto = false, empurrao = 0;
+
+      function calcularEmpurrao() {
+        const painelDir = painelEditor.offsetLeft + painelEditor.offsetWidth;
+        const r = cartaoEl.getBoundingClientRect();
+        let d = Math.max(0, painelDir + FOLGA_PAINEL - (r.left - empurrao));
+        d = Math.min(d, Math.max(0, window.innerWidth - 12 - (r.right - empurrao)));
+        return Math.round(d);
+      }
+      function abrirPainel() {
+        if (painelAberto) return;
+        painelAberto = true;
+        empurrao = calcularEmpurrao();
+        raizEd.style.setProperty('--empurrao', empurrao + 'px');
+        raizEd.classList.add('painel-aberto');
+        btnEdMenu.setAttribute('aria-expanded', 'true');
+      }
+      function fecharPainel() {
+        if (!painelAberto) return;
+        painelAberto = false; empurrao = 0;
+        raizEd.style.setProperty('--empurrao', '0px');
+        raizEd.classList.remove('painel-aberto');
+        btnEdMenu.setAttribute('aria-expanded', 'false');
+      }
+      function marcarPainel() {
+        peLivro.classList.toggle('ativo', modo === 'livro');
+        pePdf.classList.toggle('ativo', modo === 'pdf');
+      }
+      btnEdMenu.addEventListener('click', function () { painelAberto ? fecharPainel() : abrirPainel(); });
+      fundoPainel.addEventListener('click', fecharPainel);
+      peLivro.addEventListener('click', function () { fecharPainel(); btnLivro.click(); });
+      pePdf.addEventListener('click', function () { fecharPainel(); btnPdf.click(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') fecharPainel(); });
+            window.addEventListener('resize', function () {
+        if (painelAberto) { empurrao = calcularEmpurrao(); raizEd.style.setProperty('--empurrao', empurrao + 'px'); }
+      });
+
+      entrarModo('livro');
       ajustarEscala();
     })();
   </script>
 
-  <!-- ===================== NOVO-MOBILE: ZOOM, ARRASTO E MENU DO CELULAR ===================== -->
+  <!-- ===================== CELULAR: ZOOM, ARRASTO E MENU ===================== -->
   <script>
     (function () {
       const raiz = document.documentElement;
@@ -1427,20 +1392,19 @@
       const menu = document.getElementById('menuLateral');
       const fundoMenu = document.getElementById('fundoMenu');
 
-      const ALTURA_BARRA = 48;      // altura da barra de cima (igual ao CSS)
-      const MARGEM_H = 12;          // folga entre o cartão e as bordas laterais da tela
-      const MARGEM_V = 16;          // folga entre o cartão e as barras de cima e de baixo
+      const ALTURA_BARRA = 48;
+      const MARGEM_H = 12;
+      const MARGEM_V = 16;
       const LARGURA_MIN = 200;
       const ZOOM_MAX = 4;
-      const PROPORCAO = 420 / 297;  // largura / altura do cartão
+      const PROPORCAO = 420 / 297;
 
-      let zoom = 1, tx = 0, ty = 0; // zoom atual e posição do canto superior esquerdo do cartão
-      let larguraBase = 0;          // largura do cartão com zoom 1
-      let quadro = 0;               // desenho agendado
+      let zoom = 1, tx = 0, ty = 0;
+      let larguraBase = 0;
+      let quadro = 0;
 
       function celular() { return raiz.classList.contains('mobile'); }
 
-      // tamanho do cartão sem zoom: 93% da largura da tela (ou o que a altura permitir)
       function medir() {
         larguraBase = Math.max(LARGURA_MIN, Math.min(
           window.innerWidth * 0.93,
@@ -1453,13 +1417,12 @@
         return { w: w, h: w / PROPORCAO };
       }
 
-      // mantém o cartão dentro dos limites: se cabe na tela fica centralizado, se não cabe dá para ver qualquer parte dele
       function limitar() {
         const d = dimensoes();
         const vw = window.innerWidth, vh = window.innerHeight;
         const topo = ALTURA_BARRA + MARGEM_V, base = vh - topo;
         tx = d.w > vw - 2 * MARGEM_H ? Math.min(MARGEM_H, Math.max(vw - MARGEM_H - d.w, tx)) : (vw - d.w) / 2;
-        ty = d.h > base - topo     ? Math.min(topo,   Math.max(base - d.h, ty))        : (vh - d.h) / 2;
+        ty = d.h > base - topo ? Math.min(topo, Math.max(base - d.h, ty)) : (vh - d.h) / 2;
       }
 
       function aplicar() {
@@ -1470,12 +1433,8 @@
       }
       function agendar() { if (!quadro) quadro = requestAnimationFrame(aplicar); }
 
-      // ---------- gestos: um dedo arrasta, dois dedos fazem zoom (pinça) ----------
-      let gesto = null;      // 'arrasto' | 'pinca' | null
-      let ultimo = null;     // último ponto do arrasto
-      let pinca = null;      // dados da pinça no começo
-      let vx = 0, vy = 0;    // velocidade do arrasto (para continuar deslizando ao soltar)
-      let inerciaId = 0;
+      let gesto = null, ultimo = null, pinca = null;
+      let vx = 0, vy = 0, inerciaId = 0;
 
       function ignorar(alvo) {
         return alvo && alvo.closest && alvo.closest('.barra-topo, .menu-lateral, .fundo-menu, .controles, .visor-zona');
@@ -1486,7 +1445,6 @@
 
       function iniciarPinca(t) {
         const m = meio(t), d = dimensoes();
-        // guarda qual ponto do cartão está entre os dedos, para ele ficar sob os dedos durante o zoom
         pinca = { dist: Math.max(1, distancia(t)), zoom: zoom, ux: (m.x - tx) / d.w, uy: (m.y - ty) / d.h };
         gesto = 'pinca';
       }
@@ -1504,7 +1462,7 @@
 
       document.addEventListener('touchmove', function (e) {
         if (!celular() || !gesto) return;
-        if (e.cancelable) e.preventDefault(); // impede o navegador de rolar ou dar zoom na página inteira
+        if (e.cancelable) e.preventDefault();
         if (gesto === 'pinca' && e.touches.length >= 2) {
           const m = meio(e.touches);
           zoom = Math.min(ZOOM_MAX, Math.max(1, pinca.zoom * distancia(e.touches) / pinca.dist));
@@ -1529,7 +1487,7 @@
       function fimDoToque(e) {
         if (!celular() || !gesto) return;
         if (e.touches.length >= 2) { iniciarPinca(e.touches); return; }
-        if (e.touches.length === 1) { iniciarArrasto(e.touches[0]); return; } // soltou um dedo da pinça: segue arrastando
+        if (e.touches.length === 1) { iniciarArrasto(e.touches[0]); return; }
         const era = gesto;
         gesto = null; pinca = null;
         if (era === 'arrasto' && Math.hypot(vx, vy) > 0.15 && performance.now() - ultimo.t < 80) deslizar();
@@ -1537,7 +1495,6 @@
       document.addEventListener('touchend', fimDoToque, { passive: true });
       document.addEventListener('touchcancel', fimDoToque, { passive: true });
 
-      // o cartão continua deslizando um pouco depois de soltar o dedo
       function deslizar() {
         let t0 = performance.now();
         const passo = function (t) {
@@ -1555,12 +1512,10 @@
         inerciaId = requestAnimationFrame(passo);
       }
 
-      // iPhone/iPad: impede o zoom de pinça nativo da página
       ['gesturestart', 'gesturechange'].forEach(function (nome) {
         document.addEventListener(nome, function (e) { if (celular()) e.preventDefault(); });
       });
 
-      // ---------- menu (botão de três barrinhas) ----------
       function abrirMenu(abrir) {
         raiz.classList.toggle('menu-aberto', abrir);
         btnMenu.setAttribute('aria-expanded', abrir ? 'true' : 'false');
@@ -1568,20 +1523,18 @@
       }
       btnMenu.addEventListener('click', function () { abrirMenu(!raiz.classList.contains('menu-aberto')); });
       fundoMenu.addEventListener('click', function () { abrirMenu(false); });
-      // escolher uma opção fecha o menu (a ação da opção já foi feita pelo script do livro)
       menu.addEventListener('click', function (e) {
         if (celular() && e.target.closest('button')) abrirMenu(false);
       });
       document.addEventListener('keydown', function (e) { if (e.key === 'Escape') abrirMenu(false); });
 
-      // ---------- tela girou, janela mudou ou passou de computador para celular ----------
       const mq = window.matchMedia(window.__MQ_MOBILE);
       function aoMudarModo() {
         raiz.classList.toggle('mobile', mq.matches);
         pararInercia(); gesto = null; pinca = null;
         if (mq.matches) { zoom = 1; medir(); limitar(); aplicar(); }
         else { cartao.style.transform = ''; abrirMenu(false); }
-        window.dispatchEvent(new Event('resize')); // o script das medidas do computador recalcula
+        window.dispatchEvent(new Event('resize'));
       }
       if (mq.addEventListener) mq.addEventListener('change', aoMudarModo); else mq.addListener(aoMudarModo);
 
@@ -1595,4 +1548,5 @@
   </script>
 
 </body>
+<!-- final leitor 1/1 -->
 </html>
