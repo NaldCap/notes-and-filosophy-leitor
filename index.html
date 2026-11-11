@@ -191,7 +191,11 @@
       text-align: justify;
     }
     .folha h2 { font-size: 15px; font-weight: 700; text-align: left; margin: 0 0 10px; }
-    .folha p { margin: 0 0 12px; }
+        .folha p { margin: 0 0 12px; }
+    .folha .area-texto {
+      height: 913px;      /* 1123 da folha − 110 de margem em cima − 100 embaixo */
+      overflow: hidden;   /* limite da margem de baixo */
+    }
     .folha h2:not(:first-child) { margin-top: 0; padding-top: 22px; }
     .folha h2:not(:first-child)[data-sem-espaco] { padding-top: 0; }
     .folha p[data-cont-next] { text-align-last: justify; }
@@ -950,7 +954,8 @@
         if (indice < 0 || indice >= TOTAL_LIVRO) return '';
         if (indice === 0) return '<div class="folha folha-especial folha-imagem"><img src="capa.png" alt="Capa"><span class="sombra-capa"></span></div>';
         if (indice === TOTAL_LIVRO - 1) return '<div class="folha folha-especial folha-imagem"><img src="contra-capa.png" alt="Contra-capa"><span class="sombra-capa"></span></div>';
-        return '<div class="folha">' + paginas[indice - 1] +
+                return '<div class="folha"><div class="area-texto">' + paginas[indice - 1] + '</div>' +
+               '<div class="num">' + indice + '</div></div>';
                '<div class="num">' + indice + '</div></div>';
       }
 
